@@ -26,7 +26,12 @@ const conversationSchema = new mongoose.Schema({
     last_updated: {
         type: Date,
         default: Date.now
-    }
+    },
+    message_list: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message',
+        required: true
+    }]
 }, {
     timestamps: true
 });
