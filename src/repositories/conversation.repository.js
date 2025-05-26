@@ -1,4 +1,4 @@
-const Conversation = require('../models/Conversation');
+const Conversation = require('./models/Conversation');
 
 class ConversationRepository {
   async create(conversationData) {
@@ -30,6 +30,13 @@ class ConversationRepository {
       conversationId,
       { $set: { updatedAt: new Date() } },
       { new: true }
+    );
+  }
+
+  async removeMessageFromConversation(conversationId, messageId){
+    return await Conversation.findByIdAndUpdate(conversationId,
+       { $pull: { messages: messageId } },
+       { new: true }
     );
   }
 

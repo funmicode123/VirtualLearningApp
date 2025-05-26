@@ -1,4 +1,4 @@
-const Message = require('../models/Message');
+const Message = require('./models/Message');
 
 class MessageRepository {
   async create(messageData) {
@@ -8,13 +8,13 @@ class MessageRepository {
 
   async findById(messageId) {
     return await Message.findById(messageId)
-      .populate('sender_id', 'email');
+      .populate('senderId', 'email');
   }
 
   async findAllByConversation(conversationId) {
-    return await Message.find({ Conversation_id: conversationId })
+    return await Message.find({conversationId })
       .sort({ timeStamp: 1 })
-      .populate('sender_id', 'email');
+      .populate('senderId', 'email');
   }
 
   async markAsRead(messageId) {

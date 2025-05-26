@@ -1,0 +1,3 @@
+// class createMessageRequest{
+//   private $message;
+// }
