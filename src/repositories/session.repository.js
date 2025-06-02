@@ -1,8 +1,16 @@
-const Session = require('../models/session.model');
+const Session = require('../models/session');
 
 class SessionRepository {
   async createSession(data) {
     return await Session.create(data);
+  }
+
+  async joinSession(sessionId, userId) {
+    return await Session.findOneAndUpdate(
+      { id: sessionId },
+      { $addToSet: { attendeeList: userId } },
+      { new: true }
+    ).populate('attendeeList');
   }
 
   async findById(id) {
