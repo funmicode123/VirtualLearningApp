@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { stringify } = require('uuid');
 const { v4: uuidv4 } = require('uuid');
 
 const sessionSchema = new mongoose.Schema({
@@ -12,12 +13,12 @@ const sessionSchema = new mongoose.Schema({
     required: true
   },
   host: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true
   },
   attendeeList: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User'
   }],
   startTime: {
