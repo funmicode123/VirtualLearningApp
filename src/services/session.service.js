@@ -1,5 +1,6 @@
 const sessionRepository = require('../repositories/session.repository');
 const { 
+  AppError,
   BadRequestError, 
   NotFoundError,
   InternalServerError 
@@ -20,16 +21,19 @@ class SessionService {
   }
 
   async getSessionById(id) {
-    const session = await sessionRepository.findById(id);
-    if (!validateUUID(id)) {
-      throw new AppError('Invalid session ID format', 400);
-    }
-
-    if (!session) {
-      throw new AppError('Session not found', 404);
-    }
-    return session;
+  if (!validateUUID(id)) {
+    throw new AppError('Invalid session ID format', 400);
   }
+  
+  const session = await sessionRepository.findById(id);
+  console.log('🔍 Found session:', session); 
+
+  if (!session) {
+    throw new AppError('Session not found', 404);
+  }
+  return session;
+}
+
 
   async getAllSessions(filter = {}) {
     try {
@@ -65,33 +69,36 @@ class SessionService {
     }
   }
 
-  async joinSession(sessionId, userId) {
-    if (!validateUUID(sessionId) ){
-      throw new BadRequestError('Invalid session ID format');
-    }
-    if (!validateUUID(userId)) {
-      throw new BadRequestError('Invalid user ID format');
-    }
-
-    try {
-      const session = await this.getSessionById(sessionId);
-      
-      const alreadyJoined = session.attendeeList.some(attendeeId => 
-        attendeeId.toString() === userId.toString()
-      );
-
-      if (!alreadyJoined) {
-        session.attendeeList.push(userId);
-        await session.save();
-      }
-
-      return session;
-    } catch (error) {
-      if (error instanceof AppError) throw error;
-      throw new InternalServerError('Failed to join session')
-        .withMetadata({ sessionId, userId });
-    }
+  async joinSession(sessionId, email) {
+  if (!validateUUID(sessionId)) {
+    throw new BadRequestError('Invalid session ID format');
   }
+
+  if (!email || typeof email !== 'string' || !/^\S+@\S+\.\S+$/.test(email)) {
+    throw new BadRequestError('Invalid email');
+  }
+
+  try {
+    const session = await this.getSessionById(sessionId);
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const alreadyJoined = session.attendeeList.includes(normalizedEmail);
+    if (!alreadyJoined) {
+      session.attendeeList.push(normalizedEmail);
+      await session.save();
+    }
+
+    return session;
+  } catch (error) {
+    console.error('Join session error', error);
+    if (error instanceof AppError) throw error;
+    throw new InternalServerError('Failed to join session')
+      .withMetadata({ sessionId, email });
+  }
+}
+
+
+
 }
 
 module.exports = new SessionService();

@@ -1,5 +1,5 @@
 const sessionService = require('../services/session.service');
-const AppError = require('../utils/customErrors');
+const {AppError} = require('../utils/customErrors');
 const CreateSessionResponse = require('../dto/response/session/createSession.response');
 const validateHost =require('../utils/sessionUtils')
 
@@ -24,16 +24,18 @@ exports.joinSession = async (req, res, next) => {
   try {
     const session = await sessionService.joinSession(
       req.params.id,
-      req.user.id 
+      req.user.email 
     );
     res.status(200).json({
       status: 'success',
+      message: 'User successfully joined the session',
       data: session
     });
   } catch (error) {
     next(error); 
   }
 };
+
 
 exports.getAllSessions = async (req, res, next) => {
   try {

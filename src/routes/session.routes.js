@@ -3,13 +3,14 @@ const router = express.Router();
 const sessionController = require('../controllers/sessionController');
 const authenticate = require('../middlewares/authMiddleware'); 
 const validateRequest = require('../middlewares/validateRequest');
+const joinValidateRequest = require('../middlewares/joinValidateRequest');
 const createSessionDto  = require('../dto/request/session/createSession.dto');
 const joinSessionDto = require('../dto/request/session/joinSession.dto')
 const updateSessionDto = require('../dto/request/session/updateSession.dto')
 
 router.post('/', authenticate, validateRequest(createSessionDto), sessionController.createSession);
 
-router.patch('/:id/join', authenticate, validateRequest(joinSessionDto), sessionController.joinSession);
+router.patch('/:id/join', authenticate, joinValidateRequest(joinSessionDto), sessionController.joinSession);
 
 router.get('/', authenticate, sessionController.getAllSessions);
 router.get('/:id', authenticate, sessionController.getSessionById);
@@ -245,12 +246,12 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - userId
+ *               - email
  *             properties:
- *               userId:
+ *               email:
  *                 type: string
- *                 format: uuid
- *                 example: "6497a47c-d056-44b6-822a-6c0113acba37"
+ *                 format: email
+ *                 example: "abcd@gmail.com"
  *     responses:
  *       200:
  *         description: Successfully joined the session
@@ -297,4 +298,50 @@ module.exports = router;
  *         description: Unauthorized - missing or invalid token
  *       404:
  *         description: Session not found
+ */
+
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Session:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *           example: '8980b2ed-c6ad-4959-953e-cf5f238a3a5c'
+ *         topic:
+ *           type: string
+ *           example: 'How might we track participant attention?'
+ *         host:
+ *           type: string
+ *           format: uuid
+ *           example: '81f43db8-c06e-41e0-97ff-41a4c333d000'
+ *         attendeeList:
+ *           type: array
+ *           items:
+ *             type: string
+ *             format: uuid
+ *           example:
+ *             - 'a5d3210b-87de-41e9-a4c9-835ed342bd30'
+ *             - '81f43db8-c06e-41e0-97ff-41a4c333d000'
+ *         startTime:
+ *           type: string
+ *           format: date-time
+ *           example: '2025-06-05T10:00:00.000Z'
+ *         endTime:
+ *           type: string
+ *           format: date-time
+ *           example: '2025-06-05T12:00:00.000Z'
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           example: '2025-06-03T21:03:01.104Z'
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           example: '2025-06-03T21:42:08.090Z'
  */

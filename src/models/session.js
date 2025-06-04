@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { stringify } = require('uuid');
 const { v4: uuidv4 } = require('uuid');
 
 const sessionSchema = new mongoose.Schema({
@@ -17,10 +16,17 @@ const sessionSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  attendeeList: [{
-    type: String,
-    ref: 'User'
-  }],
+  attendeeList: {
+    type: [String],
+    lowercase: true,
+    trim: true,
+    validate: {
+      validator: emails => emails.every(email => /^\S+@\S+\.\S+$/.test(email)),
+      message: props => `Invalid emails found: ${props.value}`
+    },
+    default: []
+  },
+
   startTime: {
     type: Date,
     required: true

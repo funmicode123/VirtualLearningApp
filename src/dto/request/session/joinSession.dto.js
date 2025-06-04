@@ -1,18 +1,26 @@
 const Joi = require('joi');
 
-const joinSessionDto = Joi.object({
+const joinSessionDto = {
   params: Joi.object({
-    id: Joi.string().uuid({ version: 'uuidv4' }).required().messages({
-      'string.guid': 'Session ID must be a valid UUID v4',
-      'any.required': 'Session ID is required'
-    })
+    id: Joi.string()
+      .guid({ version: ['uuidv4'] })  // ✅ Correct UUID validation
+      .required()
+      .messages({
+        'string.guid': 'Session ID must be a valid UUID v4',
+        'any.required': 'Session ID is required',
+      }),
   }),
   body: Joi.object({
-    userId: Joi.string().uuid({ version: 'uuidv4' }).required().messages({
-      'string.guid': 'User ID must be a valid UUID v4',
-      'any.required': 'User ID is required'
-    })
-  })
-}).options({ allowUnknown: false });
+    email: Joi.string()
+      .email()
+      .max(100)
+      .required()
+      .messages({
+        'string.email': 'Email must be a valid email address',
+        'string.max': 'Email must not exceed 100 characters',
+        'any.required': 'Email is required',
+      }),
+  }),
+};
 
 module.exports = joinSessionDto;
