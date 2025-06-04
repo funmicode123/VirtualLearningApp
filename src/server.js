@@ -1,6 +1,9 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const http = require('http');
+const { Server } = require('socket.io');
 const app = require('./app');
+const initSocket = require('./config/socket'); 
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -10,20 +13,26 @@ if (!MONGODB_URI) {
   process.exit(1);
 }
 
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000', // update if needed
+    methods: ['GET', 'POST']
+  }
+});
+
+// Initialize socket logic
+initSocket(io);
+
 mongoose.connect(MONGODB_URI)
-.then(() => {
-  console.log('MongoDB connected');
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-})
-.catch(err => {
-  console.error('MongoDB connection error:', err);
-  process.exit(1); 
-});
-
-
-
-
-app.listen(PORT, () => {
-  console.log(` Server running on http://localhost:${PORT}`);
-});
-
+  .then(() => {
+    console.log('MongoDB connected');
+    server.listen(PORT, () => {
+      console.log(`Server with Socket.IO running on http://localhost:${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });

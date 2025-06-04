@@ -1,3 +1,4 @@
+const User = require('../models/user'); // assuming you have a User model
 const Session = require('../models/session');
 
 class SessionRepository {
@@ -5,20 +6,37 @@ class SessionRepository {
     return await Session.create(data);
   }
 
-  async joinSession(sessionId, userId) {
-    return await Session.findOneAndUpdate(
+  async joinSession(sessionId, email) {
+    const updated = await Session.findOneAndUpdate(
       { id: sessionId },
-      { $addToSet: { attendeeList: userId } },
+      { $addToSet: { attendeeList: email } },
       { new: true }
-    ).populate('attendeeList');
+    );
+
+    if (!updated) return null;
+
+    const attendees = await User.find({ email: { $in: updated.attendeeList } });
+
+    return {
+      ...updated.toObject(),
+      attendeeDetails: attendees
+    };
   }
 
   async findById(id) {
-    return await Session.findOne({ id }).populate('attendeeList');
+    const session = await Session.findOne({ id });
+    if (!session) return null;
+
+    const attendees = await User.find({ email: { $in: session.attendeeList } });
+
+    session.attendeeDetails = attendees;
+
+    return session; 
+ 
   }
 
   async findAll() {
-    return await Session.find().populate('attendeeList');
+    return await Session.find(); 
   }
 
   async updateSession(id, updates) {
@@ -29,12 +47,8 @@ class SessionRepository {
     return await Session.findOneAndDelete({ id });
   }
 
-  async addAttendee(sessionId, userId) {
-    return await Session.findOneAndUpdate(
-      { id: sessionId },
-      { $addToSet: { attendeeList: userId } },
-      { new: true }
-    );
+  async addAttendee(sessionId, email) {
+    return await this.joinSession(sessionId, email); 
   }
 }
 

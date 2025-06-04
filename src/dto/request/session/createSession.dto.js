@@ -30,15 +30,26 @@ const createSessionDto = Joi.object({
       'any.required': 'End time is required'
     }),
 
+  // attendeeList: Joi.array()
+  //   .max(50)
+  //   .items(Joi.string().uuid({ version: 'uuidv4' }))
+  //   .optional()
+  //   .default([])
+  //   .messages({
+  //     'array.base': 'Attendee list must be an array',
+  //     'array.max': 'Maximum 50 attendees allowed',  
+  //     'string.guid': 'Each attendee ID must be a valid UUID v4'  
+  //   })
+
   attendeeList: Joi.array()
     .max(50)
-    .items(Joi.string().uuid({ version: 'uuidv4' }))
+    .items(Joi.string().email())
     .optional()
     .default([])
     .messages({
       'array.base': 'Attendee list must be an array',
       'array.max': 'Maximum 50 attendees allowed',  
-      'string.guid': 'Each attendee ID must be a valid UUID v4'  
+      'string.email': 'Each attendee must be a valid email address'  
     })
 });
 
