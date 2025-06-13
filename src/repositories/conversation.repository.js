@@ -43,6 +43,11 @@ class ConversationRepository {
   async delete(conversationId) {
     return await Conversation.findByIdAndDelete(conversationId);
   }
+
+  async deleteBySessionId(sessionId) {
+    return await Conversation.findOneAndDelete({ sessionId });
+  }
+
 }
 
 module.exports = new ConversationRepository();
