@@ -1,13 +1,60 @@
 const express = require('express');
+const errorHandler = require('./middlewares/errorHandler');
 const cors = require('cors');
 const app = express();
+const sessionRoutes = require('./routes/session.routes');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
+const jwt = require('jsonwebtoken');
+const signupRouter = require('./routes/signup.routes')
+const loginRouter = require('./routes/login.routes')
+const conversationRouter = require('./routes/conversationRoute');
 
-app.use(cors());
+require('dotenv').config();
+
+// Generate token on startup (mock user ID)
+const mockUserId = '64dcebbd2a2a0123456789a1';
+const token = jwt.sign({ id: mockUserId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+console.log('\n🔐 Test JWT Token (valid for 1h):\n');
+console.log(token);
+console.log('\nPaste this token in Swagger "Authorize" button.\n');
+
+app.use(cors({
+  origin: '*', // For development only
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
+app.use('/api/v1', signupRouter);
+app.use('/api/v1', loginRouter);
+app.use('/api/v1', conversationRouter);
 
+
+const swaggerOptions = {
+  swaggerOptions: {
+    authAction: {
+      bearerAuth: {
+        name: "bearerAuth",
+        schema: {
+          type: "http",
+          in: "header",
+          name: "Authorization",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        },
+        value: `Bearer ${token}`,
+      }
+    }
+  }
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
+app.use('/sessions', sessionRoutes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Attention Tracker API');
 });
+
+app.use(errorHandler);
 
 module.exports = app;

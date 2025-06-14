@@ -1,4 +1,4 @@
-const CreateConversationDTO = require('../dto/request/createConversation.dto');
+const CreateConversationDTO = require('../dto/request/conversation/createConversation.dto');
 const ConversationRepository =  require('../repositories/conversation.repository');
 const SessionRepository = require('../repositories/session.repository');
 
