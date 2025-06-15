@@ -12,7 +12,6 @@ const conversationRouter = require('./routes/conversationRoute');
 
 require('dotenv').config();
 
-// Generate token on startup (mock user ID)
 const mockUserId = '64dcebbd2a2a0123456789a1';
 const token = jwt.sign({ id: mockUserId }, process.env.JWT_SECRET, { expiresIn: '1h' });
 console.log('\n🔐 Test JWT Token (valid for 1h):\n');
@@ -20,7 +19,7 @@ console.log(token);
 console.log('\nPaste this token in Swagger "Authorize" button.\n');
 
 app.use(cors({
-  origin: '*', // For development only
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

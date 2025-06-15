@@ -1,7 +1,8 @@
+const session = require("../../../models/session");
+
 class CreateSessionResponse {
   constructor(session) {
-    // this.status = false;
-    this.id = session._id || session.id;
+    this.id = session.id;
     this.topic = session.topic;
     this.startTime = session.startTime;
     this.endTime = session.endTime;
@@ -9,6 +10,7 @@ class CreateSessionResponse {
     this.attendeeList = session.attendeeList.map(user => this.formatUser(user));
     this.createdAt = session.createdAt;
     this.updatedAt = session.updatedAt;
+    this.link = `${process.env.BASE_URL}/sessions/${session.id}`;
   }
 
   formatUser(user) {
@@ -34,7 +36,7 @@ class CreateSessionResponse {
   toJSON() {
     return {
     //   status: false,
-      id: this.id,
+      sessionId: this.id,
       topic: this.topic,
       startTime: this.startTime,
       endTime: this.endTime,
@@ -42,7 +44,8 @@ class CreateSessionResponse {
       attendees: this.attendeeList,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      duration: this.calculateDuration()
+      duration: this.calculateDuration(),
+      link: this.link
     };
   }
 

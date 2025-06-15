@@ -10,10 +10,10 @@ const updateSessionDto = require('../dto/request/session/updateSession.dto')
 
 router.post('/', authenticate, validateRequest(createSessionDto), sessionController.createSession);
 
-router.patch('/:id/join', authenticate, joinValidateRequest(joinSessionDto), sessionController.joinSession);
+router.patch('/join/:token', authenticate, joinValidateRequest(joinSessionDto), sessionController.joinViaInvite);
 
 router.get('/', authenticate, sessionController.getAllSessions);
-router.get('/:id', authenticate, sessionController.getSessionById);
+router.get('/:token', authenticate, sessionController.getSessionById);
 
 router.put('/:id', authenticate, validateRequest(updateSessionDto), sessionController.updateSession);
 
@@ -48,17 +48,17 @@ module.exports = router;
  *               startTime:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-06-03T10:00:00Z"
+ *                 example: "2025-06-20T10:00:00Z"
  *               endTime:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-06-03T12:00:00Z"
+ *                 example: "2025-06-20T12:00:00Z"
  *               attendeeList:
  *                 type: array
  *                 items:
  *                   type: string
- *                   format: objectId
- *                   example: "a5d3210b-87de-41e9-a4c9-835ed342bd30"
+ *                   format: email
+ *                   example: "user@gmail.com"
  *     responses:
  *       201:
  *         description: Session created successfully
@@ -73,12 +73,15 @@ module.exports = router;
  *                   example: "e1aabf3e-5f4d-4fcb-b14a-cab6dc69a317"
  *                 topic:
  *                   type: string
+ *                   example: "How might we track participant attention?"
  *                 startTime:
  *                   type: string
  *                   format: date-time
+ *                   example: "2025-06-03T10:00:00Z"
  *                 endTime:
  *                   type: string
  *                   format: date-time
+ *                   example: "2025-06-03T12:00:00Z"
  *                 host:
  *                   type: string
  *                   format: uuid
@@ -87,7 +90,12 @@ module.exports = router;
  *                   type: array
  *                   items:
  *                     type: string
- *                     format: uuid
+ *                     format: email
+ *                     example: "user@gmail.com"
+ *                 link:
+ *                   type: string
+ *                   format: uri
+ *                   example: "http://localhost:5000/join/56582545-e37d-442f-927a-c83587064cd5"
  *       400:
  *         description: Bad request
  *       401:
@@ -95,6 +103,7 @@ module.exports = router;
  *       500:
  *         description: Internal server error
  */
+
 
 
 
@@ -138,19 +147,19 @@ module.exports = router;
 
 /**
  * @swagger
- * /sessions/{id}:
+ * /sessions/{token}:
  *   get:
- *     summary: Get a session by ID
+ *     summary: Get a session by token
  *     tags: [Sessions]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: token
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the session to retrieve
+ *         description: The token of the session to retrieve
  *     responses:
  *       200:
  *         description: Session retrieved successfully
@@ -184,7 +193,7 @@ module.exports = router;
  * @swagger
  * /sessions/{id}:
  *   put:
- *     summary: Update a session by ID
+ *     summary: Update a session by an ID
  *     tags: [Sessions]
  *     security:
  *       - bearerAuth: []
@@ -194,7 +203,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the session to update
+ *         description: The session ID to update
  *     requestBody:
  *       required: true
  *       content:
@@ -208,9 +217,11 @@ module.exports = router;
  *               startTime:
  *                 type: string
  *                 format: date-time
+ *                 example: "2025-06-20T01:40:57.742Z"
  *               endTime:
  *                 type: string
  *                 format: date-time
+ *                 example: "2025-06-20T01:44:57.742Z"
  *     responses:
  *       200:
  *         description: Session updated successfully
@@ -225,7 +236,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /sessions/{id}/join:
+ * /sessions/join/{token}:
  *   patch:
  *     summary: Join a session as an attendee
  *     tags: [Sessions]
@@ -233,12 +244,12 @@ module.exports = router;
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: token
  *         schema:
  *           type: string
  *           format: uuid
  *         required: true
- *         description: The ID of the session to join
+ *         description: The session invite token
  *     requestBody:
  *       required: true
  *       content:

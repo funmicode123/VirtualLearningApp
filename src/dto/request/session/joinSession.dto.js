@@ -1,13 +1,14 @@
 const Joi = require('joi');
 
+
 const joinSessionDto = {
   params: Joi.object({
-    id: Joi.string()
-      .guid({ version: ['uuidv4'] })  // ✅ Correct UUID validation
+    token: Joi.string()
+      .uuid({ version: 'uuidv4' }) 
       .required()
       .messages({
-        'string.guid': 'Session ID must be a valid UUID v4',
-        'any.required': 'Session ID is required',
+        'string.guid': 'Invite token must be a valid UUID',
+        'any.required': 'Invite token is required',
       }),
   }),
   body: Joi.object({
@@ -24,3 +25,4 @@ const joinSessionDto = {
 };
 
 module.exports = joinSessionDto;
+
