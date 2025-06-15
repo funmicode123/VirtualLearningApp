@@ -2,7 +2,9 @@ const sessionService = require('../services/session.service');
 const {AppError} = require('../utils/customErrors');
 const CreateSessionResponse = require('../dto/response/session/createSession.response');
 const validateHost =require('../utils/sessionUtils')
-
+const {generateInviteToken}=require('../utils/generateInviteToken');
+const SessionInvite=require('../models/sessionInvite');
+const Session=require('../models/session');
 
 exports.createSession = async (req, res, next) => {
   try {
@@ -11,30 +13,60 @@ exports.createSession = async (req, res, next) => {
       host: req.user.id 
     };
     const session = await sessionService.createSession(sessionData);
+
+    const token = await generateInviteToken(session.id, req.user.email);
+    
+    const baseUrl = process.env.BASE_URL;
+    const sessionUrl = `${baseUrl}/join/${token}`;
+    
     res.status(201).json({
       status: 'success',
-      data: CreateSessionResponse.from(session).toJSON()
+      message:'Session crreated successfully',
+      data: {
+        ...CreateSessionResponse.from(session).toJSON(),
+        link: sessionUrl
+      },
     });
   } catch (err) {
     next(err);
   }
 };
 
-exports.joinSession = async (req, res, next) => {
+
+exports.joinViaInvite = async (req, res, next) => {
   try {
-    const session = await sessionService.joinSession(
-      req.params.id,
-      req.user.email 
-    );
+    const { token } = req.params;
+    const { email } = req.body;
+
+    const invite = await SessionInvite.findOne({ token });
+    if (!invite) {
+      return res.status(404).json({ message: 'Invalid invite token' });
+    }
+
+    if (invite.expiresAt < new Date()) {
+      return res.status(410).json({ message: 'Invite token has expired' });
+    }
+
+    const session = await Session.findOne({ id: invite.sessionId });
+    if (!session) {
+      return res.status(404).json({ message: 'Session not found' });
+    }
+
+    if (req.user && !session.attendeeList.includes(req.user.email)) {
+      session.attendeeList.push(req.user.email);
+      await session.save();
+    }
+
     res.status(200).json({
       status: 'success',
-      message: 'User successfully joined the session',
+      message: 'User successfully joined the session via invite link',
       data: session
     });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
+
 
 
 exports.getAllSessions = async (req, res, next) => {
@@ -69,9 +101,11 @@ exports.getSessionById = async (req, res, next) => {
 exports.updateSession = async (req, res, next) => {
   try {
     const session = await sessionService.getSessionById(req.params.id);
-    validateHost(session, req.user.id);
+
+    validateHost(session, req.user.id); 
     
     const updated = await sessionService.updateSession(req.params.id, req.body);
+
     res.status(200).json({
       status: 'success',
       data: CreateSessionResponse.from(updated).toJSON()
@@ -80,6 +114,7 @@ exports.updateSession = async (req, res, next) => {
     next(err);
   }
 };
+
 
 exports.deleteSession = async (req, res, next) => {
   try {

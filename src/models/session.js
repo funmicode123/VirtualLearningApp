@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const sessionSchema = new mongoose.Schema({
   id: {
     type: String,
-    default: uuidv4,
+    default: ()=> uuidv4(),
     unique: true
   },
   topic: {
@@ -34,6 +34,13 @@ const sessionSchema = new mongoose.Schema({
   endTime: {
     type: Date,
     required: true
+  },
+  conversationId: {
+    type: String,
+    ref: 'Conversation',
+    unique: true,
+    default: uuidv4,
+    index: true
   }
 }, {
   timestamps: true
