@@ -8,7 +8,16 @@ export const joinSessionThunk = createAsyncThunk(
   'session/join',
   async (linkCode, { rejectWithValue }) => {
     try {
-      const res = await api.patch(`/sessions/join/${linkCode}`);
+      const token = localStorage.getItem('token'); // or however you stored it
+
+      const res = await api.patch(`/sessions/join/${linkCode}`,{},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       const { data } = res.data;
       const { session, streamToken } = data;
 
@@ -28,6 +37,7 @@ export const joinSessionThunk = createAsyncThunk(
     }
   }
 );
+
 
 const sessionSlice = createSlice({
   name: 'session',
