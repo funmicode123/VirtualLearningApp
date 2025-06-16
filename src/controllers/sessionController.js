@@ -16,7 +16,6 @@ exports.createSession = async (req, res, next) => {
     const session = await sessionService.createSession(sessionData);
 
     const token = await generateInviteToken(session.id, req.user.email);
-    const streamToken = generateStreamToken(req.user.id);
 
     const baseUrl = process.env.BASE_URL;
     const sessionUrl = `${baseUrl}/join/${token}`;
@@ -26,7 +25,6 @@ exports.createSession = async (req, res, next) => {
       message:'Session crreated successfully',
       data: {
         ...CreateSessionResponse.from(session).toJSON(),
-        streamToken: streamToken,
         link: sessionUrl
       },
     });
@@ -60,10 +58,16 @@ exports.joinViaInvite = async (req, res, next) => {
       await session.save();
     }
 
+    const streamToken = generateStreamToken(req.user.id);
+
     res.status(200).json({
       status: 'success',
       message: 'User successfully joined the session via invite link',
-      data: session
+      data: {
+        session,
+        sessionId: session.id,
+        streamToken: streamToken
+     }
     });
   } catch (error) {
     next(error);
