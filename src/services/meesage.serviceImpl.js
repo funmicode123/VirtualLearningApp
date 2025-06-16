@@ -1,23 +1,29 @@
 const Message = require('../repositories/message.repository');
 const Conversation = require('../repositories/conversation.repository');
+const CreateMessageRequest = require('../dto/request/message/CreateMessageRequest');
+const DeleteMessageRequest = require('../dto/request/message/deleteMessageRequest');
 
 class MessageService {
-    async createMessage({conversationId, senderId, content, messageType = 'text', attachments = []}) {
-      const conversation = await this.#validateConversationExists(conversationId);     
-      const messageInformation = {
-        conversationId,
-        senderId,
-        content,
-        messageType,
-        attachments
-      };
+    async createMessage(data) {
+      const createMessageDto = CreateMessageRequest(data);
 
-      const message = await Message.create(messageInformation);
+      await this.#validateConversationExists(createMessageDto.conversationId);
+
+      const message = await Message.create({
+        conversationId: createMessageDto.conversationId,
+        senderId: createMessageDto.senderId,
+        content: createMessageDto.content,
+        messageType: createMessageDto.messageType,
+        attachments: createMessageDto.attachments
+    });
       return message;
     }
 
-    async deleteMessage({conversationId, messageId}) {
-      const conversation = await this.#validateConversationExists(conversationId);     
+    async deleteMessage(data) {
+
+      const deleteMessageDto = DeleteMessageRequest(data);
+
+      await this.#validateConversationExists(conversationId);     
 
       const message = await Message.findById(messageId);
       if (!message) {
@@ -28,8 +34,8 @@ class MessageService {
         throw new Error('Message does not belong to the given conversation');
       }
 
-      await Message.delete(messageId);
-      await Conversation.removeMessageFromConversation(conversationId);
+      await Message.delete(deleteMessageDto.messageId);
+      await Conversation.removeMessageFromConversation(deleteMessageDto.conversationId);
 
       return {success: true, message: "Message deleted Successfully"};
     }
@@ -39,10 +45,6 @@ class MessageService {
       if (!foundConversation) {
         throw new Error('Conversation not found');
       }
-    }
-
-    async #validateMessageExist(messageId){
-
     }
 }
 module.exports = new MessageService();

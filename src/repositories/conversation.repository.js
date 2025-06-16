@@ -1,4 +1,4 @@
-const Conversation = require('./models/Conversation');
+const Conversation = require('../models/Conversation');
 
 class ConversationRepository {
   async create(conversationData) {
@@ -43,6 +43,11 @@ class ConversationRepository {
   async delete(conversationId) {
     return await Conversation.findByIdAndDelete(conversationId);
   }
+
+  async deleteBySessionId(sessionId) {
+    return await Conversation.findOneAndDelete({ sessionId });
+  }
+
 }
 
 module.exports = new ConversationRepository();
