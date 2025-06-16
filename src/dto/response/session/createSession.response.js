@@ -10,7 +10,6 @@ class CreateSessionResponse {
     this.attendeeList = session.attendeeList.map(user => this.formatUser(user));
     this.createdAt = session.createdAt;
     this.updatedAt = session.updatedAt;
-    this.link = `${process.env.BASE_URL}/sessions/${session.id}`;
   }
 
   formatUser(user) {

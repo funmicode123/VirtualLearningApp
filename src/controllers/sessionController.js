@@ -5,6 +5,7 @@ const validateHost =require('../utils/sessionUtils')
 const {generateInviteToken}=require('../utils/generateInviteToken');
 const SessionInvite=require('../models/sessionInvite');
 const Session=require('../models/session');
+const {generateStreamToken}=require('../utils/streamUtils');
 
 exports.createSession = async (req, res, next) => {
   try {
@@ -15,15 +16,17 @@ exports.createSession = async (req, res, next) => {
     const session = await sessionService.createSession(sessionData);
 
     const token = await generateInviteToken(session.id, req.user.email);
-    
+    const streamToken = generateStreamToken(req.user.id);
+
     const baseUrl = process.env.BASE_URL;
     const sessionUrl = `${baseUrl}/join/${token}`;
-    
+
     res.status(201).json({
       status: 'success',
       message:'Session crreated successfully',
       data: {
         ...CreateSessionResponse.from(session).toJSON(),
+        streamToken: streamToken,
         link: sessionUrl
       },
     });
