@@ -1,16 +1,38 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { joinSessionThunk } from '../../../../store/slices/sessionSlice';
 import styles from './JoinPage.module.css';
+import { useSelector } from 'react-redux';
 
+const extractLinkCode = (url) => {
+  try {
+    const parts = url.trim().split('/');
+    return parts[parts.length - 1];
+  } catch {
+    return null;
+  }
+};
 
 const JoinPage = () => {
   const [link, setLink] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const handleJoin = () => {
+  const { isJoining } = useSelector((state) => state.session || {}); // ✅ protect against undefined
 
-  //   navigate(`/session/${encodeURIComponent(link)}`);
-  // };
+  const handleJoin = async () => {
+    const linkCode = extractLinkCode(link);
+    if (!linkCode) return alert('Invalid link');
+    
+    const res = await dispatch(joinSessionThunk(linkCode));
+    if (joinSessionThunk.fulfilled.match(res)) {
+      navigate('/session'); // 🔁 Redirect to video session page
+    } else {
+      alert(res.payload?.message || 'Join failed');
+      console.log(res.message)
+    }
+  };
 
   return (
     <div className={styles.joinPageContainer}>
@@ -22,9 +44,9 @@ const JoinPage = () => {
         onChange={(e) => setLink(e.target.value)}
         className={styles.joinInput}
       />
-      <button className={styles.joinButton} >Join Session</button>
-
-      {/* <button className={styles.joinButton} onClick={handleJoin}>Join Session</button> */}
+      <button onClick={handleJoin} className={styles.joinButton}>
+        {isJoining ? 'Joining...' : 'Join Session'}
+      </button>
     </div>
   );
 };

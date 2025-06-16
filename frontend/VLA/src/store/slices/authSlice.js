@@ -60,6 +60,7 @@ const authSlice = createSlice({
     user: getPersistedUser(), 
     isLoading: false,        
     error: null,
+    activeSession: null,
   },
   reducers: {
     logout(state) {
