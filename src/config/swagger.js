@@ -1,8 +1,10 @@
 const swaggerJsdoc = require('swagger-jsdoc');
-
+const swaggerUi = require('swagger-ui-express');
 const generateToken = require('../utils/generateToken');
+const path = require('path');
 
 const token = generateToken();
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -27,11 +29,18 @@ const options = {
     },
     security: [{ bearerAuth: [] }]
   },
-  apis: ['./src/routes/*.js', './src/dto/**/*.js'], 
+
+  apis: [
+    path.join(__dirname, '../routes/*.js'),
+    path.join(__dirname, '../dto/**/*.js'),
+  ], 
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 swaggerSpec.token = token;
 
-module.exports = swaggerSpec;
+module.exports = {
+  swaggerUi,
+  swaggerSpec
+};

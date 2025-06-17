@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../store/slices/authSlice';
+import sessionReducer from '../store/slices/sessionSlice'
 
 const token = localStorage.getItem('token');
 
@@ -25,6 +26,7 @@ function parseJwt(token) {
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    session: sessionReducer,
   },
   preloadedState: initialState,
 });

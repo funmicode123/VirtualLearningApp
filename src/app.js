@@ -6,9 +6,11 @@ const sessionRoutes = require('./routes/session.routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const jwt = require('jsonwebtoken');
-const signupRouter = require('./routes/signup.routes')
-const loginRouter = require('./routes/login.routes')
+const signupRouter = require('./routes/signup.routes');
+const loginRouter = require('./routes/login.routes');
 const path = require('path');
+const conversationRouter = require('./routes/conversationRoute');
+
 require('dotenv').config();
 
 const mockUserId = '64dcebbd2a2a0123456789a1';
@@ -25,6 +27,8 @@ app.use(cors({
 app.use(express.json());
 app.use('/api/v1', signupRouter);
 app.use('/api/v1', loginRouter);
+app.use('/api/v1', conversationRouter);
+
 
 const swaggerOptions = {
   swaggerOptions: {
