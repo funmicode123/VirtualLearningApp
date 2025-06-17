@@ -19,7 +19,7 @@ const JoinPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isJoining } = useSelector((state) => state.session || {}); // ✅ protect against undefined
+  const { isJoining } = useSelector((state) => state.session || {});
 
   const handleJoin = async () => {
     const linkCode = extractLinkCode(link);
@@ -27,7 +27,8 @@ const JoinPage = () => {
     
     const res = await dispatch(joinSessionThunk(linkCode));
     if (joinSessionThunk.fulfilled.match(res)) {
-      navigate('/session'); // 🔁 Redirect to video session page
+      // const sessionId = res.payload.session.id;
+      navigate('/liveSession'); 
     } else {
       alert(res.payload?.message || 'Join failed');
       console.log(res.message)
