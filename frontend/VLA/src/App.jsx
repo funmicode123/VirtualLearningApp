@@ -7,6 +7,7 @@ import SignupPage from './components/auth/pages/SignupPage';
 import LoginPage from './components/auth/pages/LoginPage';
 import Dashboard from './components/auth/pages/Dashboard';
 import NotFound from './components/auth/pages/NotFound';
+import LandingPage from './components/auth/pages/LandingPage';
 
 const App = () => {
   const { user, isLoading } = useSelector((state) => state.auth);
@@ -15,11 +16,11 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route 
-        path="/dashboard" 
+        path="/" 
         element={user ? <Dashboard /> : <Navigate to="/login" />} 
       />
       <Route path="*" element={<NotFound />} />

@@ -3,8 +3,10 @@ const signupRouter = express.Router();
 const { signupSchema } = require('../dto/request/user/signup.dto');
 const validateRequest = require('../middlewares/validateRequest');
 const {signup} = require('../controllers/signup.controller');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
-signupRouter.post('/signup', validateRequest(signupSchema), signup);
+signupRouter.post('/signup', upload.single('profilePic'), validateRequest(signupSchema), signup);
 
 module.exports = signupRouter;
 

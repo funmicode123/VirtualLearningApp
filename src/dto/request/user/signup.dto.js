@@ -15,6 +15,7 @@ const signupSchema = Joi.object({
       'string.min': 'Password must be at least 6 characters',
       'string.max': 'Password must be less than 30 characters',
     }),
+    
 });
 
 module.exports = {

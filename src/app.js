@@ -8,6 +8,7 @@ const swaggerSpec = require('./config/swagger');
 const jwt = require('jsonwebtoken');
 const signupRouter = require('./routes/signup.routes')
 const loginRouter = require('./routes/login.routes')
+const path = require('path');
 require('dotenv').config();
 
 const mockUserId = '64dcebbd2a2a0123456789a1';
@@ -42,7 +43,7 @@ const swaggerOptions = {
     }
   }
 };
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 app.use('/sessions', sessionRoutes);
 
