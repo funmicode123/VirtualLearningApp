@@ -8,9 +8,13 @@ export const joinSessionThunk = createAsyncThunk(
   'session/join',
   async (linkCode, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token'); // or however you stored it
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGMzZmVmLWVlZmItNGEzNC1hMjQzLWFiOGYzMDFlNTZlZSIsImVtYWlsIjoidXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NTAxNjY5NTcsImV4cCI6MTc1MDc3MTc1N30.L4gPbTMFUY_P1s6lcOueN8N33dcVU1_wzKffaBxcb7A";
+
+      // const token = localStorage.getItem('token');
 
       const res = await api.patch(`/sessions/join/${linkCode}`,{},
+      // const res = await api.patch(`/sessions/join/9c2c9aae-8a35-441d-92d4-3093734b398b`,{},
+
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -21,7 +25,10 @@ export const joinSessionThunk = createAsyncThunk(
       const { data } = res.data;
       const { session, streamToken } = data;
 
-      const userEmail = session.attendeeList[session.attendeeList.length - 1];
+      // const userEmail = session.attendeeList[session.attendeeList.length - 1];
+
+      const userEmail = session?.attendeeList?.at(-1) || 'dummy@example.com';
+
 
       await streamClient.connectUser(
         { id: userEmail },

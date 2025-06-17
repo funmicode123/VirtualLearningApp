@@ -30,6 +30,7 @@ const SignupForm = ({ onClose }) => {
     const file = e.target.files[0];
     if (file) {
       setAvatarPreview(URL.createObjectURL(file));
+
       setValue("Avatar image.png", file);
     }
   };
@@ -38,6 +39,7 @@ const SignupForm = ({ onClose }) => {
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
+
     if (data.profilePic) {
       formData.append("profilePic", data.profilePic);
     }
@@ -45,6 +47,7 @@ const SignupForm = ({ onClose }) => {
     const result = await dispatch(signupThunk(formData));
     if (signupThunk.fulfilled.match(result)) {
       onClose?.();
+
       navigate("/");
     }
   };
@@ -55,6 +58,7 @@ const SignupForm = ({ onClose }) => {
     );
     if (googleAuthThunk.fulfilled.match(result)) {
       onClose?.();
+
       navigate("/");
     }
   };
@@ -82,6 +86,7 @@ const SignupForm = ({ onClose }) => {
           <label className={styles.label}>Profile picture</label>
           <input
             type="file"
+
             accept="assets/*"
             onChange={handleAvatarChange}
             className={styles.fileInput}
@@ -102,6 +107,7 @@ const SignupForm = ({ onClose }) => {
         >
           {loading ? "Signing up..." : "Sign Up"}
         </button>
+
 
         {error && <p className={styles.error}>{error}</p>}
       </form>
