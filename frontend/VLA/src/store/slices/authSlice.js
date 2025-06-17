@@ -1,55 +1,36 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { StreamChat } from 'stream-chat';
-import api from '../../utils/api';
+import axiosInstance from '../../utils/axiosInstance';
 
-const streamClient = StreamChat.getInstance(import.meta.env.VITE_STREAM_API_KEY);
-
-const getPersistedUser = () => {
-  try {
-    return JSON.parse(localStorage.getItem('streamUser'));
-  } catch (e) {
-    return null;
-  }
-};
-
-export const signupThunk = createAsyncThunk(
+const signupThunk = createAsyncThunk(
   'auth/signup',
-  async (formData, { rejectWithValue }) => {
+  async (formData, thunkAPI) => {
     try {
-      const response = await api.post('/signup', formData);
-      const { user, streamToken } = response.data;
-      
-      await streamClient.connectUser(
-        { id: user._id, ...user }, 
-        streamToken
-      );
-      
-      localStorage.setItem('streamUser', JSON.stringify(user));
-      return user;
+      const response = await axiosInstance.post('/signup', formData);
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      return { user, token };
     } catch (err) {
-      await streamClient.disconnectUser();
-      return rejectWithValue(err.response?.data || 'Signup failed');
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || 'Signup failed'
+      );
     }
   }
 );
 
-export const googleAuthThunk = createAsyncThunk(
+const googleAuthThunk = createAsyncThunk(
   'auth/googleAuth',
-  async (token, { rejectWithValue }) => {
+  async (googleToken, thunkAPI) => {
     try {
-      const response = await api.post('/auth/google', { token });
-      const { user, streamToken } = response.data;
-
-      await streamClient.connectUser(
-        { id: user._id, ...user },
-        streamToken
-      );
-      
-      localStorage.setItem('streamUser', JSON.stringify(user));
-      return user;
+      const response = await axiosInstance.post('/auth/google', { 
+        token: googleToken 
+      });
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      return { user, token };
     } catch (err) {
-      await streamClient.disconnectUser();
-      return rejectWithValue(err.response?.data || 'Google login failed');
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || 'Google authentication failed'
+      );
     }
   }
 );
@@ -57,43 +38,53 @@ export const googleAuthThunk = createAsyncThunk(
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: getPersistedUser(), 
-    isLoading: false,        
+    user: null,
+    token: null,
+    loading: false,
     error: null,
     activeSession: null,
   },
   reducers: {
     logout(state) {
-      localStorage.removeItem('streamUser');
-      streamClient.disconnectUser();
       state.user = null;
+      state.token = null;
+      localStorage.removeItem('token');
     },
   },
-  extraReducers: (builder) => {
-    builder
-      .addMatcher(
-        (action) => action.type.endsWith('/pending'),
-        (state) => {
-          state.isLoading = true;
-          state.error = null;
-        }
-      )
-      .addMatcher(
-        (action) => action.type.endsWith('/fulfilled'),
-        (state, action) => {
-          state.isLoading = false;
-          state.user = action.payload;
-        }
-      )
-      .addMatcher(
-        (action) => action.type.endsWith('/rejected'),
-        (state, action) => {
-          state.isLoading = false;
-          state.error = action.payload;
-        }
-      );
-  },
+  
+extraReducers: (builder) => {
+  builder
+    .addCase(signupThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    })
+    .addCase(googleAuthThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    })
+
+    .addMatcher(
+      (action) =>
+        [signupThunk.pending.type, googleAuthThunk.pending.type].includes(action.type),
+      (state) => {
+        state.loading = true;
+        state.error = null;
+      }
+    )
+    .addMatcher(
+      (action) =>
+        [signupThunk.rejected.type, googleAuthThunk.rejected.type].includes(action.type),
+      (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }
+    );
+}
+
 });
 
+export {signupThunk, googleAuthThunk, authSlice};
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;

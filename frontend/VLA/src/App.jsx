@@ -7,6 +7,7 @@ import SignupPage from './components/auth/pages/SignupPage';
 import LoginPage from './components/auth/pages/LoginPage';
 import Dashboard from './components/auth/pages/Dashboard';
 import NotFound from './components/auth/pages/NotFound';
+import LandingPage from './components/auth/pages/LandingPage';
 import JoinAndCreateSession from './components/auth/pages/joinAndCreateSession/JoinAndCreateSession';
 import JoinPage from './components/auth/pages/joinAndCreateSession/JoinPage';
 import Session from './components/auth/pages/videoSession/Session'
@@ -18,13 +19,13 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/sessions" element={<JoinAndCreateSession />} />            
       <Route path="/join" element={<JoinPage />} />
       <Route 
-        path="/dashboard" 
+        path="/" 
         element={user ? <Dashboard /> : <Navigate to="/login" />} 
       />
       <Route path="/liveSession" element={<Session />} />

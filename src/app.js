@@ -6,8 +6,9 @@ const sessionRoutes = require('./routes/session.routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const jwt = require('jsonwebtoken');
-const signupRouter = require('./routes/signup.routes')
-const loginRouter = require('./routes/login.routes')
+const signupRouter = require('./routes/signup.routes');
+const loginRouter = require('./routes/login.routes');
+const path = require('path');
 const conversationRouter = require('./routes/conversationRoute');
 
 require('dotenv').config();
@@ -46,7 +47,7 @@ const swaggerOptions = {
     }
   }
 };
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 app.use('/sessions', sessionRoutes);
 
