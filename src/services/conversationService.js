@@ -7,18 +7,18 @@ class ConversationService {
   async createConversation(data) {
     const dto = new CreateConversationDTO(data);
 
-    if (!dto.participants.includes(dto.host)) {
-      dto.participants.push(dto.host);
+    if (!dto.participants.includes(dto.hostId)) {
+      dto.participants.push(dto.hostId);
     }
 
-    const conversation = new Conversation({
+    const conversation = await ConversationRepository.create({
       sessionId: dto.sessionId,
-      host: dto.host,
+      host: dto.hostId,
       participants: dto.participants
     });
 
-    await conversation.save();
     return conversation;
+
   }
 
   async deleteConversation(sessionId){
@@ -38,4 +38,4 @@ class ConversationService {
   }
 }
 
-module.exports = ConversationService;
+module.exports = new ConversationService();

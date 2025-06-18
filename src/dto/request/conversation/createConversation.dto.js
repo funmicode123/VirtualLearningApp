@@ -3,20 +3,20 @@ const Joi = require('joi');
 // Validation schema using Joi
 const conversationSchema = Joi.object({
   sessionId: Joi.string().required(),
-  host: Joi.string().required(),
+  hostId: Joi.string().required(),
   participants: Joi.array().items(Joi.string()).required()
 });
 
 class CreateConversationDTO {
-  constructor({sessionId, host, participants }) {
+  constructor({sessionId, hostId, participants }) {
     // Validate input
-    const { error, value } = conversationSchema.validate({sessionId, host, participants });
+    const { error, value } = conversationSchema.validate({sessionId, hostId, participants });
     if (error) {
       throw new Error(error.details[0].message);
     }
 
     this.sessionId = value.sessionId;
-    this.host = value.host;
+    this.hostId = value.hostId;
     this.participants = value.participants;
   }
 }

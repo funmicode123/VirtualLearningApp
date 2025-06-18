@@ -20,9 +20,10 @@ console.log(token);
 console.log('\nPaste this token in Swagger "Authorize" button.\n');
 
 app.use(cors({
-  origin: '*', 
+  origin: 'http://localhost:5173', 
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 app.use(express.json());
 app.use('/api/v1', signupRouter);
@@ -49,7 +50,7 @@ const swaggerOptions = {
 };
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
-app.use('/sessions', sessionRoutes);
+app.use('/api/v1/sessions', sessionRoutes);
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Attention Tracker API');

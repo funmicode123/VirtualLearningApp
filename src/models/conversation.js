@@ -32,9 +32,7 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message'
   }]
-}, {
-  timestamps: true  
-});
+}, {timestamps: true });
 
 conversationSchema.index({ conversationId: 1, participants: 1 });
 
