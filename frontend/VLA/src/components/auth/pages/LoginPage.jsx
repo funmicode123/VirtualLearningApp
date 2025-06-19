@@ -1,11 +1,18 @@
-import React from 'react'
+import LoginForm from '../forms/LoginForm';
+import GoogleLoginButton from '../pages/GoogleLoginButton';
+import styles from './SignupPage.module.css';
 
-function LoginPage() {
+const LoginPage = () => {
   return (
-    <div>
-      
+    <div className={styles.pageContainer}>
+      <div className={styles.formCard}>
+        <h2>Virtual Learning App</h2>
+        <LoginForm />
+        <div className={styles.divider}>OR</div>
+        <GoogleLoginButton />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

@@ -17,6 +17,23 @@ const signupThunk = createAsyncThunk(
   }
 );
 
+const loginThunk = createAsyncThunk(
+  'auth/login',
+  async (formData, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post('/login', formData);
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      return { user, token };
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.error || err.response?.data?.message || 'Login failed'
+);
+
+    }
+  }
+);
+
 const googleAuthThunk = createAsyncThunk(
   'auth/googleAuth',
   async (googleToken, thunkAPI) => {
@@ -59,6 +76,20 @@ extraReducers: (builder) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
     })
+    .addCase(loginThunk.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(loginThunk.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    })
+    .addCase(loginThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
     .addCase(googleAuthThunk.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload.user;
@@ -85,6 +116,6 @@ extraReducers: (builder) => {
 
 });
 
-export {signupThunk, googleAuthThunk, authSlice};
+export {signupThunk, googleAuthThunk, loginThunk, authSlice};
 export const { logout } = authSlice.actions;
 export default authSlice.reducer;

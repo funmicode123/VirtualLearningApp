@@ -11,7 +11,7 @@ const loginUser = async ({ email, password }) => {
 
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
-    throw new UnauthorizedError('Invalid credentials');
+    throw new UnauthorizedError('Incorrect password');
   }
 
   const token = jwt.sign(
