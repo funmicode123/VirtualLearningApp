@@ -11,7 +11,7 @@ const ZoomLandingPage = () => {
   };
 
   const handleHost = () => {
-    console.log("Host clicked");
+    navigate('/host');
   };
 
   return (

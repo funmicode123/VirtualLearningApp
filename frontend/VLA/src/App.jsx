@@ -1,7 +1,16 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
+import HomePage from './components/auth/pages/HomePage';
+import SignupPage from './components/auth/pages/SignupPage';
+import LoginPage from './components/auth/pages/LoginPage';
+import Dashboard from './components/auth/pages/Dashboard';
+import NotFound from './components/auth/pages/NotFound';
+import LandingPage from './components/auth/pages/LandingPage';
+import JoinAndCreateSession from './components/auth/pages/joinAndCreateSession/JoinAndCreateSession';
+import JoinPage from './components/auth/pages/joinAndCreateSession/JoinPage';
+import Session from './components/auth/pages/videoSession/Session';
+import HostSessionPage from './components/auth/pages/joinAndCreateSession/hostSessionPage/HostSessionPage';
 import HomePage from "./components/auth/pages/HomePage";
 import SignupPage from "./components/auth/pages/SignupPage";
 import LoginPage from "./components/auth/pages/LoginPage";

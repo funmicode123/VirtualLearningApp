@@ -1,4 +1,6 @@
 const Conversation = require('../models/Conversation');
+const Message = require('../models/Message');
+
 
 class ConversationRepository {
   async create(conversationData) {
@@ -9,7 +11,13 @@ class ConversationRepository {
   async findById(id) {
     return await Conversation.findById(id)
       .populate('participants', 'email')
-      .populate('messages');  
+      .populate({
+        path: 'messages',
+        populate: {
+          path: 'senderId',
+          select: 'email' // or 'email name' depending on what you need
+        }
+      });
   }
 
   async findAllByParticipant(userId) {
@@ -20,7 +28,10 @@ class ConversationRepository {
   async addMessage(conversationId, messageId) {
     return await Conversation.findByIdAndUpdate(
       conversationId,
-      { $push: { messages: messageId }, $set: { updatedAt: new Date() } },
+      { 
+        $push: { messages: messageId }, 
+        $set: { updatedAt: new Date() } 
+      },
       { new: true }
     );
   }

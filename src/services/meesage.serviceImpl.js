@@ -5,7 +5,7 @@ const DeleteMessageRequest = require('../dto/request/message/deleteMessageReques
 
 class MessageService {
     async createMessage(data) {
-      const createMessageDto = CreateMessageRequest(data);
+      const createMessageDto = new CreateMessageRequest(data);
 
       await this.#validateConversationExists(createMessageDto.conversationId);
 
@@ -15,7 +15,12 @@ class MessageService {
         content: createMessageDto.content,
         messageType: createMessageDto.messageType,
         attachments: createMessageDto.attachments
-    });
+      });
+
+      await Conversation.addMessage(
+        createMessageDto.conversationId,
+        message.id
+      );
       return message;
     }
 

@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../utils/api';
 import { StreamChat } from 'stream-chat';
+import { jwtDecode } from 'jwt-decode';
+
 
 const streamClient = StreamChat.getInstance(import.meta.env.VITE_STREAM_API_KEY);
 
@@ -8,16 +10,12 @@ export const joinSessionThunk = createAsyncThunk(
   'session/join',
   async (linkCode, { rejectWithValue }) => {
     try {
-      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NGMzZmVmLWVlZmItNGEzNC1hMjQzLWFiOGYzMDFlNTZlZSIsImVtYWlsIjoidXNlckBnbWFpbC5jb20iLCJpYXQiOjE3NTAxNjY5NTcsImV4cCI6MTc1MDc3MTc1N30.L4gPbTMFUY_P1s6lcOueN8N33dcVU1_wzKffaBxcb7A";
-
-      // const token = localStorage.getItem('token');
-
+      const jwtToken = localStorage.getItem('authToken');
       const res = await api.patch(`/sessions/join/${linkCode}`,{},
-      // const res = await api.patch(`/sessions/join/9c2c9aae-8a35-441d-92d4-3093734b398b`,{},
 
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${jwtToken}`,
           },
         }
       );
@@ -25,10 +23,7 @@ export const joinSessionThunk = createAsyncThunk(
       const { data } = res.data;
       const { session, streamToken } = data;
 
-      // const userEmail = session.attendeeList[session.attendeeList.length - 1];
-
-      const userEmail = session?.attendeeList?.at(-1) || 'dummy@example.com';
-
+      const userEmail = session.attendeeList[session.attendeeList.length - 1];
 
       await streamClient.connectUser(
         { id: userEmail },
@@ -41,6 +36,67 @@ export const joinSessionThunk = createAsyncThunk(
       return { session, streamToken };
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Failed to join session');
+    }
+  }
+);
+
+
+export const hostSessionThunk = createAsyncThunk(
+  'session/host',
+  async ({ topic, startTime, endTime}, { rejectWithValue }) => {
+    try {
+      const jwtToken = localStorage.getItem('authToken');
+      const userEmail = JSON.parse(localStorage.getItem('streamUserEmail'));
+      const userId = localStorage.getItem('streamUserId');
+      // const userId = userEmail;
+
+      console.log('userId:', userId);
+      console.log('userEmail:', userEmail);
+
+      if (!jwtToken || !userEmail || !userId) {
+        return rejectWithValue('Authentication data missing');
+      }
+
+      const payload = {
+        topic,
+        startTime: new Date(startTime).toISOString(),
+        endTime: new Date(endTime).toISOString(),
+        attendeeList: [userEmail],
+      };
+
+      console.log('Hosting payload: ', payload);
+
+      const res = await api.post('/sessions', payload, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+   
+      const { data } = res.data; 
+      const { streamToken, sessionId, link, ...sessionDetails } = data;
+
+      console.log("Stream Token from Host Session Thunk", streamToken);
+      console.log('Connecting Stream user with id:', userId);
+      console.log('userId from localStorage:', userId);
+      console.log('decoded streamToken:', jwtDecode(streamToken));
+
+      const { user_id } = jwtDecode(streamToken);
+
+
+      if (streamClient.user) {
+        await streamClient.disconnectUser(); // ← prevents re-connect error
+      }
+
+      await streamClient.connectUser({ id: user_id }, streamToken);
+
+      localStorage.setItem('streamUser', JSON.stringify({ email: userEmail }));
+      localStorage.setItem('activeSession', JSON.stringify({streamToken, sessionId, link, ...sessionDetails}));
+      localStorage.setItem('streamToken', streamToken);
+
+      return { session: {streamToken, sessionId, link, ...sessionDetails}, streamToken };
+    } catch (err) {
+      console.error('hostSessionThunk error:', err?.response?.data || err.message || err);
+      return rejectWithValue(err.response?.data || 'Failed to host session');
     }
   }
 );
@@ -69,7 +125,22 @@ const sessionSlice = createSlice({
       .addCase(joinSessionThunk.rejected, (state, action) => {
         state.isJoining = false;
         state.error = action.payload;
+      })
+
+      .addCase(hostSessionThunk.pending, (state) => {
+        state.isJoining = true;
+        state.error = null;
+      })
+      .addCase(hostSessionThunk.fulfilled, (state, action) => {
+        state.isJoining = false;
+        state.session = action.payload.session;
+        state.streamToken = action.payload.streamToken;
+      })
+      .addCase(hostSessionThunk.rejected, (state, action) => {
+        state.isJoining = false;
+        state.error = action.payload;
       });
+
   },
 });
 

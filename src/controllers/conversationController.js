@@ -3,9 +3,9 @@ const conversationService = require('../services/conversationService')
 
 const createConversation = async (req, res) => {
   try {
-    const { sessionId, host, participants } = req.body;
+    const { sessionId, hostId, participants } = req.body;
 
-    const conversation = await conversationService.createConversation({ sessionId, host, participants });
+    const conversation = await conversationService.createConversation({ sessionId, hostId, participants });
 
     return res.status(201).json({
       success: true,

@@ -1,0 +1,87 @@
+.hostSessionContainer {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 1rem;
+}
+
+.formWrapper {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.formWrapper h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+
+.hostForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.hostLabel {
+  text-align: left;
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-top: 0.5rem;
+}
+
+.hostInput {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  color: #111827;
+  outline: none;
+}
+
+.hostInput:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.submitButton {
+  padding: 0.75rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #2563eb;
+}
+
+/* Optional: mobile responsiveness */
+@media (max-width: 480px) {
+  .formWrapper {
+    padding: 2rem 1rem;
+  }
+
+  .formWrapper h2 {
+    font-size: 1.5rem;
+  }
+
+  .submitButton {
+    font-size: 0.95rem;
+  }
+}

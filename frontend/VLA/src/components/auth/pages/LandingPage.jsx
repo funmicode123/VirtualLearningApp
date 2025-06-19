@@ -2,8 +2,15 @@ import React from 'react';
 import styles from '../../auth/pages/LandingPage.module.css';
 import { ArrowRight } from 'lucide-react';
 import Image from '@/assets/virtual-hero.jpeg';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
+  const handleSession = () => {
+    navigate('/sessions');
+  };
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
@@ -14,7 +21,7 @@ const LandingPage = () => {
           <p className={styles.heroText}>
             Join interactive sessions, get real-time feedback, and track your learning progress—all in one platform designed for modern learners.
           </p>
-          <button className={styles.ctaButton}>
+          <button className={styles.ctaButton} onClick={handleSession}>
             Get Started
             <ArrowRight className={styles.ctaIcon} />
           </button>

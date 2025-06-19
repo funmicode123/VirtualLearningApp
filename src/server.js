@@ -8,17 +8,27 @@ const app = require('./app');
 const initSocket = require('./config/socket'); 
 const { swaggerUi, swaggerSpec } = require('./config/swagger');
 const MessageRouter = require('./routes/messageRoute');
+const googleAuthRouter = require('./routes/googleAuth.routes');
+const sessionRouter = require('./routes/session.routes');
+
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 app.use(express.json());
 
 
 app.use('/api', MessageRouter);
+app.use('/api/v1', googleAuthRouter);
+app.use('/sessions', sessionRouter);
+
+
 
 if (!MONGODB_URI) {
   console.error('MongoDB URI not defined in .env file');
