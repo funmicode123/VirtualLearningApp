@@ -9,9 +9,11 @@ import { GoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 
 import styles from "./SignupForm.module.css";
+import { toast } from "react-toastify";
 
 const SignupForm = ({ onClose }) => {
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -30,8 +32,7 @@ const SignupForm = ({ onClose }) => {
     const file = e.target.files[0];
     if (file) {
       setAvatarPreview(URL.createObjectURL(file));
-
-      setValue("Avatar image.png", file);
+      setValue("profilePic", file);
     }
   };
 
@@ -39,16 +40,31 @@ const SignupForm = ({ onClose }) => {
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
-
     if (data.profilePic) {
       formData.append("profilePic", data.profilePic);
     }
 
     const result = await dispatch(signupThunk(formData));
     if (signupThunk.fulfilled.match(result)) {
-      onClose?.();
+      toast.success("🎉 Signup successful! Redirecting...", {
+        position: "top-right",
+        theme: "colored",
+        icon: "✅",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
-      navigate("/");
+      setIsRedirecting(true);
+      setTimeout(() => {
+        setIsRedirecting(false);
+        onClose?.();
+        navigate("/");
+      }, 3000);
+    } else {
+      toast.error(result.payload || "Signup failed. Please try again.");
     }
   };
 
@@ -58,7 +74,6 @@ const SignupForm = ({ onClose }) => {
     );
     if (googleAuthThunk.fulfilled.match(result)) {
       onClose?.();
-
       navigate("/");
     }
   };
@@ -86,8 +101,8 @@ const SignupForm = ({ onClose }) => {
           <label className={styles.label}>Profile picture</label>
           <input
             type="file"
-
-            accept="assets/*"
+            accept="image/*"
+            {...register("profilePic")}
             onChange={handleAvatarChange}
             className={styles.fileInput}
           />
@@ -101,21 +116,23 @@ const SignupForm = ({ onClose }) => {
         </div>
 
         <button
-          type="submit"
-          disabled={loading}
           className={styles.submitButton}
+          type="submit"
+          disabled={loading || isRedirecting}
         >
-          {loading ? "Signing up..." : "Sign Up"}
+          {loading || isRedirecting ? "Processing..." : "Sign Up"}
         </button>
-
 
         {error && <p className={styles.error}>{error}</p>}
       </form>
 
+      {/* Future: Enable Google Signup */}
       {/* <div className={styles.divider}>OR</div>
-
       <div className={styles.socialLogin}>
-        <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.error('Google Login Failed')} />
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => console.error("Google Login Failed")}
+        />
         <button className={styles.iconButton}>
           <FcGoogle className={styles.icon} />
           Sign up with Google
