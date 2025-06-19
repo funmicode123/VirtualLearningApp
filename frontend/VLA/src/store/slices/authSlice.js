@@ -1,14 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosInstance from '../../utils/axiosInstance';
+import { IdCard } from 'lucide-react';
 
 const signupThunk = createAsyncThunk(
   'auth/signup',
   async (formData, thunkAPI) => {
     try {
+      localStorage.clear();
       const response = await axiosInstance.post('/signup', formData);
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      return { user, token };
+      const { token, email, id } = response.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('streamUserEmail', JSON.stringify(email));
+      localStorage.setItem('streamUserId', JSON.stringify(id));
+
+      return { email, token };
     } catch (err) {
       return thunkAPI.rejectWithValue(
         err.response?.data?.message || 'Signup failed'
@@ -21,11 +26,15 @@ const googleAuthThunk = createAsyncThunk(
   'auth/googleAuth',
   async (googleToken, thunkAPI) => {
     try {
+      localStorage.clear();
       const response = await axiosInstance.post('/auth/google', { 
         token: googleToken 
       });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
+      const { token, email, id } = response.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('streamUserEmail', JSON.stringify(email));
+      localStorage.setItem('streamUserId', JSON.stringify(id));
+      
       return { user, token };
     } catch (err) {
       return thunkAPI.rejectWithValue(
@@ -35,11 +44,15 @@ const googleAuthThunk = createAsyncThunk(
   }
 );
 
+const storedUserStr = localStorage.getItem('streamUser');
+const storedUser = storedUserStr && storedUserStr !== 'undefined' ? JSON.parse(storedUserStr) : null;
+const storedToken = localStorage.getItem('authToken');
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
-    token: null,
+    user: storedUser,
+    token: storedToken || null,
     loading: false,
     error: null,
     activeSession: null,

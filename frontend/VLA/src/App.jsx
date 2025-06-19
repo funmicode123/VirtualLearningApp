@@ -10,7 +10,8 @@ import NotFound from './components/auth/pages/NotFound';
 import LandingPage from './components/auth/pages/LandingPage';
 import JoinAndCreateSession from './components/auth/pages/joinAndCreateSession/JoinAndCreateSession';
 import JoinPage from './components/auth/pages/joinAndCreateSession/JoinPage';
-import Session from './components/auth/pages/videoSession/Session'
+import Session from './components/auth/pages/videoSession/Session';
+import HostSessionPage from './components/auth/pages/joinAndCreateSession/hostSessionPage/HostSessionPage';
 
 const App = () => {
   const { user, isLoading } = useSelector((state) => state.auth);
@@ -24,6 +25,7 @@ const App = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/sessions" element={<JoinAndCreateSession />} />            
       <Route path="/join" element={<JoinPage />} />
+      <Route path="/host" element={<HostSessionPage />} />
       <Route 
         path="/" 
         element={user ? <Dashboard /> : <Navigate to="/login" />} 
