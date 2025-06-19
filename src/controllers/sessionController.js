@@ -20,12 +20,16 @@ exports.createSession = async (req, res, next) => {
     const baseUrl = process.env.BASE_URL;
     const sessionUrl = `${baseUrl}/join/${token}`;
 
+    const streamToken = generateStreamToken(req.user.id);
+
+
     res.status(201).json({
       status: 'success',
       message:'Session crreated successfully',
       data: {
         ...CreateSessionResponse.from(session).toJSON(),
-        link: sessionUrl
+        link: sessionUrl,
+        streamToken: streamToken
       },
     });
   } catch (err) {
