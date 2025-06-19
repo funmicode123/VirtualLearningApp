@@ -13,9 +13,9 @@ import { toast } from "react-toastify";
 
 const SignupForm = ({ onClose }) => {
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const { loading, error } = useSelector((state) => state.auth);
 
@@ -32,7 +32,7 @@ const SignupForm = ({ onClose }) => {
     const file = e.target.files[0];
     if (file) {
       setAvatarPreview(URL.createObjectURL(file));
-      setValue("Avatar image.png", file);
+      setValue("profilePic", file);
     }
   };
 
@@ -101,7 +101,8 @@ const SignupForm = ({ onClose }) => {
           <label className={styles.label}>Profile picture</label>
           <input
             type="file"
-            accept="assets/*"
+            accept="image/*"
+            {...register("profilePic")}
             onChange={handleAvatarChange}
             className={styles.fileInput}
           />
@@ -121,13 +122,17 @@ const SignupForm = ({ onClose }) => {
         >
           {loading || isRedirecting ? "Processing..." : "Sign Up"}
         </button>
+
         {error && <p className={styles.error}>{error}</p>}
       </form>
 
+      {/* Future: Enable Google Signup */}
       {/* <div className={styles.divider}>OR</div>
-
       <div className={styles.socialLogin}>
-        <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.error('Google Login Failed')} />
+        <GoogleLogin
+          onSuccess={handleGoogleSuccess}
+          onError={() => console.error("Google Login Failed")}
+        />
         <button className={styles.iconButton}>
           <FcGoogle className={styles.icon} />
           Sign up with Google
