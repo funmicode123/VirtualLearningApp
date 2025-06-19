@@ -6,7 +6,10 @@ function errorHandler(err, req, res, next) {
   }
 
   console.error(err); 
-  return res.status(500).json({ error: 'Internal Server Error' });
+
+  const status = err.statusCode || 500;
+  const message = err.message || 'Something went wrong';
+  return res.status(status).json({message});
 }
 
 module.exports = errorHandler;
