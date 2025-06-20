@@ -42,12 +42,13 @@ const HostSessionPage = () => {
           }
 
           const link = res.session.link;
+          console.log("Session link:", link);
           setSessionLink(link);
           setShowModal(true);
 
           setTimeout(() => {
             navigate(`/session/${res.session.sessionId}`);
-          }, 20000); 
+          }, 1000); 
         })
         .catch((err) => {
           console.error('Failed to host meeting:', err);
@@ -61,69 +62,154 @@ const HostSessionPage = () => {
     };
 
   return (
+    // <div className={styles.hostSessionContainer}>
+    //   <h2>Create a New Meeting</h2>
+    //   <form onSubmit={handleSubmit} className={styles.form}>
+    //     <input
+    //       type="text"
+    //       placeholder="Meeting Topic"
+    //       value={topic}
+    //       onChange={(e) => setTopic(e.target.value)}
+    //       required
+    //     />
+
+    //     <label>Start Time</label>
+    //     <input
+    //       type="datetime-local"
+    //       value={startTime}
+    //       onChange={(e) => setStartTime(e.target.value)}
+    //       required
+    //     />
+
+    //     <label>End Time</label>
+    //     <input
+    //       type="datetime-local"
+    //       value={endTime}
+    //       onChange={(e) => setEndTime(e.target.value)}
+    //       required
+    //     />
+
+    //     <button type="submit" className={styles.submitButton}>
+    //       Host Meeting
+    //     </button>
+    //   </form>
+
+      // {showModal && (
+      // <div className={styles.modalOverlay}>
+      //   <div className={styles.modal}>
+      //     <h3>Meeting Link</h3>
+      //     <a
+      //       href={sessionLink}
+      //       target="_blank"
+      //       rel="noopener noreferrer"
+      //       className={styles.linkText}
+      //     >
+      //       {sessionLink}
+      //     </a>
+      //     <button
+      //       className={styles.copyButton}
+      //       onClick={() => {
+      //         navigator.clipboard.writeText(sessionLink);
+      //         alert('Link copied to clipboard!');
+      //       }}
+      //     >
+      //       Copy Link
+      //     </button>
+      //     <button
+      //       className={styles.closeButton}
+      //       onClick={() => setShowModal(false)}
+      //     >
+      //       Close
+      //     </button>
+      //     </div>
+      //   </div>
+      // )}
+
+    // </div>
+
     <div className={styles.hostSessionContainer}>
-      <h2>Create a New Meeting</h2>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <input
-          type="text"
-          placeholder="Meeting Topic"
-          value={topic}
-          onChange={(e) => setTopic(e.target.value)}
-          required
-        />
+      <div className={styles.formWrapper}>
+        <h2>Create a New Meeting</h2>
+        <form onSubmit={handleSubmit} className={styles.hostForm}>
+          <div className={styles.formGroup}>
+            <label htmlFor="topic" className={styles.hostLabel}>Meeting Topic</label>
+            <input
+              id="topic"
+              type="text"
+              className={styles.hostInput}
+              placeholder="e.g. Meeting Topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              required
+            />
+          </div>
 
-        <label>Start Time</label>
-        <input
-          type="datetime-local"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-          required
-        />
+          <div className={styles.formGroup}>
+            <label htmlFor="startTime" className={styles.hostLabel}>Start Time</label>
+            <input
+              id="startTime"
+              type="datetime-local"
+              className={styles.hostInput}
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              required
+            />
+          </div>
 
-        <label>End Time</label>
-        <input
-          type="datetime-local"
-          value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
-          required
-        />
+          <div className={styles.formGroup}>
+            <label htmlFor="endTime" className={styles.hostLabel}>End Time</label>
+            <input
+              id="endTime"
+              type="datetime-local"
+              className={styles.hostInput}
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              required
+            />
+          </div>
 
-        <button type="submit" className={styles.submitButton}>
-          Host Meeting
+          <button type="submit" className={styles.submitButton}>
+            Host Meeting
+          </button>
+        </form>
+
+        {showModal && (
+  <div className={styles.modalOverlay}>
+    <div className={styles.modal}>
+      <h3>Meeting Link</h3>
+      <a
+        href={sessionLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.linkText}
+      >
+        {sessionLink}
+      </a>
+
+      <div className={styles.copyWrapper}>
+        <button
+          className={styles.copyButton}
+          onClick={() => {
+            navigator.clipboard.writeText(sessionLink);
+            alert('Link copied to clipboard!');
+          }}
+        >
+          📋 Copy Link
         </button>
-      </form>
-
-      {showModal && (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modal}>
-          <h3>Meeting Link</h3>
-          <a
-            href={sessionLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.linkText}
-          >
-            {sessionLink}
-          </a>
-          <button
-            className={styles.copyButton}
-            onClick={() => {
-              navigator.clipboard.writeText(sessionLink);
-              alert('Link copied to clipboard!');
-            }}
-          >
-            Copy Link
-          </button>
-          <button
-            className={styles.closeButton}
-            onClick={() => setShowModal(false)}
-          >
-            Close
-          </button>
-        </div>
       </div>
-    )}
 
+      <button
+        className={styles.closeButton}
+        onClick={() => setShowModal(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+
+      </div>
     </div>
   );
 };
