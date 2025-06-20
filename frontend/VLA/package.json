@@ -23,7 +23,11 @@
     "react-modal": "^3.16.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.2",
+<<<<<<< HEAD
     "sweetalert2": "^11.22.0",
+=======
+    "react-toastify": "^11.0.5",
+>>>>>>> f664416f70c5eef476f45a7f7abcc4e6183ab112
     "yup": "^1.6.1"
   },
   "devDependencies": {
