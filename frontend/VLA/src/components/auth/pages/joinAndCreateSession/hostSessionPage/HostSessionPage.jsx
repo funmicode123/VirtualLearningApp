@@ -42,12 +42,13 @@ const HostSessionPage = () => {
           }
 
           const link = res.session.link;
+          console.log("Session link:", link);
           setSessionLink(link);
           setShowModal(true);
 
           setTimeout(() => {
             navigate(`/session/${res.session.sessionId}`);
-          }, 20000); 
+          }, 1000); 
         })
         .catch((err) => {
           console.error('Failed to host meeting:', err);
@@ -93,36 +94,36 @@ const HostSessionPage = () => {
     //     </button>
     //   </form>
 
-    //   {showModal && (
-    //   <div className={styles.modalOverlay}>
-    //     <div className={styles.modal}>
-    //       <h3>Meeting Link</h3>
-    //       <a
-    //         href={sessionLink}
-    //         target="_blank"
-    //         rel="noopener noreferrer"
-    //         className={styles.linkText}
-    //       >
-    //         {sessionLink}
-    //       </a>
-    //       <button
-    //         className={styles.copyButton}
-    //         onClick={() => {
-    //           navigator.clipboard.writeText(sessionLink);
-    //           alert('Link copied to clipboard!');
-    //         }}
-    //       >
-    //         Copy Link
-    //       </button>
-    //       <button
-    //         className={styles.closeButton}
-    //         onClick={() => setShowModal(false)}
-    //       >
-    //         Close
-    //       </button>
-    //     </div>
-    //   </div>
-    // )}
+      // {showModal && (
+      // <div className={styles.modalOverlay}>
+      //   <div className={styles.modal}>
+      //     <h3>Meeting Link</h3>
+      //     <a
+      //       href={sessionLink}
+      //       target="_blank"
+      //       rel="noopener noreferrer"
+      //       className={styles.linkText}
+      //     >
+      //       {sessionLink}
+      //     </a>
+      //     <button
+      //       className={styles.copyButton}
+      //       onClick={() => {
+      //         navigator.clipboard.writeText(sessionLink);
+      //         alert('Link copied to clipboard!');
+      //       }}
+      //     >
+      //       Copy Link
+      //     </button>
+      //     <button
+      //       className={styles.closeButton}
+      //       onClick={() => setShowModal(false)}
+      //     >
+      //       Close
+      //     </button>
+      //     </div>
+      //   </div>
+      // )}
 
     // </div>
 
@@ -171,6 +172,43 @@ const HostSessionPage = () => {
             Host Meeting
           </button>
         </form>
+
+        {showModal && (
+  <div className={styles.modalOverlay}>
+    <div className={styles.modal}>
+      <h3>Meeting Link</h3>
+      <a
+        href={sessionLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.linkText}
+      >
+        {sessionLink}
+      </a>
+
+      <div className={styles.copyWrapper}>
+        <button
+          className={styles.copyButton}
+          onClick={() => {
+            navigator.clipboard.writeText(sessionLink);
+            alert('Link copied to clipboard!');
+          }}
+        >
+          📋 Copy Link
+        </button>
+      </div>
+
+      <button
+        className={styles.closeButton}
+        onClick={() => setShowModal(false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
+
       </div>
     </div>
   );

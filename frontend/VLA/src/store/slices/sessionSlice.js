@@ -80,14 +80,14 @@ export const hostSessionThunk = createAsyncThunk(
       console.log('userId from localStorage:', userId);
       console.log('decoded streamToken:', jwtDecode(streamToken));
 
-      const { user_id } = jwtDecode(streamToken);
+      // const { user_id } = jwtDecode(streamToken);
 
 
-      if (streamClient.user) {
-        await streamClient.disconnectUser(); // ← prevents re-connect error
-      }
+      // if (streamClient.user) {
+      //   await streamClient.disconnectUser(); // ← prevents re-connect error
+      // }
 
-      await streamClient.connectUser({ id: user_id }, streamToken);
+      // await streamClient.connectUser({ id: user_id }, streamToken);
 
       localStorage.setItem('streamUser', JSON.stringify({ email: userEmail }));
       localStorage.setItem('activeSession', JSON.stringify({streamToken, sessionId, link, ...sessionDetails}));
