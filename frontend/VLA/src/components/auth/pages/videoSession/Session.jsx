@@ -6,9 +6,7 @@ import {
   useCall,
   useCallStateHooks,
   CallingState,
-  SpeakerLayout,
-  CallControls,
-  CallParticipantsList
+  SpeakerLayout, CallControls, CallParticipantsList
 } from '@stream-io/video-react-sdk';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
