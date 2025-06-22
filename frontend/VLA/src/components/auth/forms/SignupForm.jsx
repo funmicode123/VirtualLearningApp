@@ -61,7 +61,7 @@ const SignupForm = ({ onClose }) => {
       setTimeout(() => {
         setIsRedirecting(false);
         onClose?.();
-        navigate("/");
+        navigate("/createSession");
       }, 3000);
     } else {
       toast.error(result.payload || "Signup failed. Please try again.");

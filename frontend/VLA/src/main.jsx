@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import store from './store';
 import './index.css';
+import '@stream-io/video-react-sdk/dist/css/styles.css';
+
 
 console.log("Loaded GOOGLE_CLIENT_ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
 

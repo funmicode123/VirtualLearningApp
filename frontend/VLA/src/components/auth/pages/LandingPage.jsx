@@ -8,7 +8,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const handleSession = () => {
-    navigate('/sessions');
+    navigate('/signup');
   };
 
   return (
