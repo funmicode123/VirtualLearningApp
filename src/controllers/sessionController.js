@@ -41,7 +41,8 @@ exports.createSession = async (req, res, next) => {
 exports.joinViaInvite = async (req, res, next) => {
   try {
     const { token } = req.params;
-    const { email } = req.body;
+    // const { email } = req.body;
+    const email = req.user.email; // ✅ Extract from token
 
     const invite = await SessionInvite.findOne({ token });
     if (!invite) {
