@@ -25,16 +25,17 @@ export const joinSessionThunk = createAsyncThunk(
 
       const userEmail = session.attendeeList[session.attendeeList.length - 1];
 
-      await streamClient.connectUser(
-        { id: userEmail },
-        streamToken
-      );
+      // await streamClient.connectUser(
+      //   { id: userEmail },
+      //   streamToken
+      // );
 
       localStorage.setItem('streamUser', JSON.stringify({ email: userEmail }));
       localStorage.setItem('activeSession', JSON.stringify(session));
 
       return { session, streamToken };
     } catch (err) {
+      console.error('Join error response:', err.response?.data);
       return rejectWithValue(err.response?.data || 'Failed to join session');
     }
   }
@@ -50,8 +51,8 @@ export const hostSessionThunk = createAsyncThunk(
       const userId = localStorage.getItem('streamUserId');
       // const userId = userEmail;
 
-      console.log('userId:', userId);
-      console.log('userEmail:', userEmail);
+      // console.log('userId:', userId);
+      // console.log('userEmail:', userEmail);
 
       if (!jwtToken || !userEmail || !userId) {
         return rejectWithValue('Authentication data missing');
@@ -64,7 +65,7 @@ export const hostSessionThunk = createAsyncThunk(
         attendeeList: [userEmail],
       };
 
-      console.log('Hosting payload: ', payload);
+      // console.log('Hosting payload: ', payload);
 
       const res = await api.post('/sessions', payload, {
         headers: {
@@ -75,19 +76,10 @@ export const hostSessionThunk = createAsyncThunk(
       const { data } = res.data; 
       const { streamToken, sessionId, link, ...sessionDetails } = data;
 
-      console.log("Stream Token from Host Session Thunk", streamToken);
-      console.log('Connecting Stream user with id:', userId);
-      console.log('userId from localStorage:', userId);
-      console.log('decoded streamToken:', jwtDecode(streamToken));
-
-      // const { user_id } = jwtDecode(streamToken);
-
-
-      // if (streamClient.user) {
-      //   await streamClient.disconnectUser(); // ← prevents re-connect error
-      // }
-
-      // await streamClient.connectUser({ id: user_id }, streamToken);
+      // console.log("Stream Token from Host Session Thunk", streamToken);
+      // console.log('Connecting Stream user with id:', userId);
+      // console.log('userId from localStorage:', userId);
+      // console.log('decoded streamToken:', jwtDecode(streamToken));
 
       localStorage.setItem('streamUser', JSON.stringify({ email: userEmail }));
       localStorage.setItem('activeSession', JSON.stringify({streamToken, sessionId, link, ...sessionDetails}));
@@ -95,7 +87,7 @@ export const hostSessionThunk = createAsyncThunk(
 
       return { session: {streamToken, sessionId, link, ...sessionDetails}, streamToken };
     } catch (err) {
-      console.error('hostSessionThunk error:', err?.response?.data || err.message || err);
+      // console.error('hostSessionThunk error:', err?.response?.data || err.message || err);
       return rejectWithValue(err.response?.data || 'Failed to host session');
     }
   }
