@@ -11,7 +11,7 @@ const joinSessionDto = {
         'any.required': 'Invite token is required',
       }),
   }),
-  // body: Joi.object({
+  // body: Joi.object({ //What i comment out
   //   email: Joi.string()
   //     .email()
   //     .max(100)
@@ -22,7 +22,7 @@ const joinSessionDto = {
   //       'any.required': 'Email is required',
   //     }),
   // }),
-  body: Joi.object({})
+  body: Joi.object({}) //What i implemented
 };
 
 module.exports = joinSessionDto;

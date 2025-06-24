@@ -8,8 +8,13 @@ import { hostSessionThunk } from '../../../../../store/slices/sessionSlice';
 const HostSessionPage = () => {
   const navigate = useNavigate();
   const userEmail = JSON.parse(localStorage.getItem('streamUserEmail'));
+  // const userEmail = localStorage.getItem('streamUserEmail');
   const userId = JSON.parse(localStorage.getItem('streamUserId'));
   const dispatch = useDispatch();
+
+  // console.log("User Email:", userEmail);
+  // console.log("User ID:", userId);
+
 
   const [topic, setTopic] = useState('');
   const [startTime, setStartTime] = useState('');
@@ -51,7 +56,7 @@ const HostSessionPage = () => {
           }, 6000); 
         })
         .catch((err) => {
-          console.error('Failed to host meeting:', err);
+          console.error('Failed to host meeting:', err.message);
           if(err?.response?.data){
             console.log('Backend Error: ', err.response.data);
           }
@@ -109,41 +114,39 @@ const HostSessionPage = () => {
         </form>
 
         {showModal && (
-  <div className={styles.modalOverlay}>
-    <div className={styles.modal}>
-      <h3>Meeting Link</h3>
-      <a
-        href={sessionLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.linkText}
-      >
-        {sessionLink}
-      </a>
+          <div className={styles.modalOverlay}>
+            <div className={styles.modal}>
+              <h3>Meeting Link</h3>
+              <a
+                href={sessionLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.linkText}
+              >
+                {sessionLink}
+              </a>
 
-      <div className={styles.copyWrapper}>
-        <button
-          className={styles.copyButton}
-          onClick={() => {
-            navigator.clipboard.writeText(sessionLink);
-            alert('Link copied to clipboard!');
-          }}
-        >
-           Copy Link
-        </button>
-      </div>
+              <div className={styles.copyWrapper}>
+                <button
+                  className={styles.copyButton}
+                  onClick={() => {
+                    navigator.clipboard.writeText(sessionLink);
+                    alert('Link copied to clipboard!');
+                  }}
+                >
+                  Copy Link
+                </button>
+              </div>
 
-      <button
-        className={styles.closeButton}
-        onClick={() => setShowModal(false)}
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
-
+              <button
+                className={styles.closeButton}
+                onClick={() => setShowModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

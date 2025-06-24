@@ -25,13 +25,8 @@ export const joinSessionThunk = createAsyncThunk(
 
       const userEmail = session.attendeeList[session.attendeeList.length - 1];
 
-      // await streamClient.connectUser(
-      //   { id: userEmail },
-      //   streamToken
-      // );
-
       localStorage.setItem('streamUser', JSON.stringify({ email: userEmail }));
-      localStorage.setItem('activeSession', JSON.stringify(session));
+      localStorage.setItem('activeSession', JSON.stringify({...session, sessionId: session.id, chatChannelId,}));
 
       return { session, streamToken };
     } catch (err) {
@@ -49,10 +44,6 @@ export const hostSessionThunk = createAsyncThunk(
       const jwtToken = localStorage.getItem('authToken');
       const userEmail = JSON.parse(localStorage.getItem('streamUserEmail'));
       const userId = localStorage.getItem('streamUserId');
-      // const userId = userEmail;
-
-      // console.log('userId:', userId);
-      // console.log('userEmail:', userEmail);
 
       if (!jwtToken || !userEmail || !userId) {
         return rejectWithValue('Authentication data missing');
@@ -65,8 +56,6 @@ export const hostSessionThunk = createAsyncThunk(
         attendeeList: [userEmail],
       };
 
-      // console.log('Hosting payload: ', payload);
-
       const res = await api.post('/sessions', payload, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
@@ -74,20 +63,19 @@ export const hostSessionThunk = createAsyncThunk(
       });
    
       const { data } = res.data; 
-      const { streamToken, sessionId, link, ...sessionDetails } = data;
-
-      // console.log("Stream Token from Host Session Thunk", streamToken);
-      // console.log('Connecting Stream user with id:', userId);
-      // console.log('userId from localStorage:', userId);
-      // console.log('decoded streamToken:', jwtDecode(streamToken));
+      const { streamToken, sessionId, link, chatChannelId, ...sessionDetails } = data;
 
       localStorage.setItem('streamUser', JSON.stringify({ email: userEmail }));
-      localStorage.setItem('activeSession', JSON.stringify({streamToken, sessionId, link, ...sessionDetails}));
+      localStorage.setItem('activeSession', JSON.stringify({streamToken, sessionId, link, chatChannelId, ...sessionDetails}));
       localStorage.setItem('streamToken', streamToken);
 
       return { session: {streamToken, sessionId, link, ...sessionDetails}, streamToken };
     } catch (err) {
-      // console.error('hostSessionThunk error:', err?.response?.data || err.message || err);
+        if (err?.response?.data) {
+          console.log('Backend Error:', err.response.data);
+        } else {
+          console.log('Thunk rejection:', err);
+        }
       return rejectWithValue(err.response?.data || 'Failed to host session');
     }
   }
