@@ -23,8 +23,10 @@
     "react-modal": "^3.16.3",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.2",
-
+    "react-split": "^2.0.14",
     "react-toastify": "^11.0.5",
+    "stream-chat": "^9.8.0",
+    "stream-chat-react": "^13.2.1",
     "yup": "^1.6.1"
   },
   "devDependencies": {

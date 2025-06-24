@@ -64,3 +64,26 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+/* Global CSS to fix invisible Stream Chat reactions */
+.str-chat__message-reactions__reaction-selector-button {
+  background-color: #2c2c2c !important;
+  color: #201e1e !important;
+  border: 1px solid #444 !important;
+}
+
+.str-chat__tooltip {
+  background-color: #2c2c2c !important;
+  color: #ffffff !important;
+}
+
+
+.split-layout {
+  height: 100vh;
+  display: flex;
+}
+
+.split-layout > div {
+  overflow: auto;
+}
