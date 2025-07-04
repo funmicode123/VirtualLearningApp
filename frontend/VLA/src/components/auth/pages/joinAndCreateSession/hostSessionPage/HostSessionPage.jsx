@@ -8,13 +8,8 @@ import { hostSessionThunk } from '../../../../../store/slices/sessionSlice';
 const HostSessionPage = () => {
   const navigate = useNavigate();
   const userEmail = JSON.parse(localStorage.getItem('streamUserEmail'));
-  // const userEmail = localStorage.getItem('streamUserEmail');
   const userId = JSON.parse(localStorage.getItem('streamUserId'));
   const dispatch = useDispatch();
-
-  // console.log("User Email:", userEmail);
-  // console.log("User ID:", userId);
-
 
   const [topic, setTopic] = useState('');
   const [startTime, setStartTime] = useState('');
