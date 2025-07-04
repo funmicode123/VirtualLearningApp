@@ -55,6 +55,7 @@ export default function Session() {
           singletonClient = new StreamVideoClient({ apiKey });
           await singletonClient.connectUser(user, streamToken);
         }
+
         const callInstance = singletonClient.call('default', session.sessionId);
         await callInstance.join({ create: true });
         await callInstance.camera.enable();
@@ -64,6 +65,7 @@ export default function Session() {
         setCall(callInstance);
 
         const chat = StreamChat.getInstance(apiKey);
+
         // await chat.connectUser(user, streamToken);
         if (!chat.user || chat.user.id !== user.id) {
           await chat.connectUser(user, streamToken);
@@ -116,3 +118,4 @@ export default function Session() {
     </StreamVideo>
   );
 }
+

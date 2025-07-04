@@ -50,7 +50,7 @@ const LoginForm = ({ onClose }) => {
           setTimeout(() => {
             setIsRedirecting(false);
             onClose?.();
-            navigate("/");
+            navigate("/createSession");
           }, 2000);
         } else {
           toast.error(result.payload || "Login failed. Please try again.");
